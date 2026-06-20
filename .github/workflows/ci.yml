@@ -1,0 +1,42 @@
+name: Go Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Go environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+          cache: true
+
+      - name: Download Go modules
+        run: go mod download
+
+      - name: Verify Code Formatting
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "The following files are not formatted correctly:"
+            gofmt -l .
+            exit 1
+          fi
+
+      - name: Run Go Vet (Static Analysis)
+        run: go vet ./...
+
+      - name: Compile and Build Executables
+        run: go build ./cmd/...
+
+      - name: Run Test Suites
+        run: go test -v -race ./...
