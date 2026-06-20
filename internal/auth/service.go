@@ -146,13 +146,11 @@ func (s *svc) RequestPasswordReset(ctx context.Context, req RequestPasswordReset
 	}
 	url := client_url + "/auth/reset-password?token=" + rawToken
 	userData := struct {
-		Name  string
-		Token string
-		url   string
+		Name string
+		Url  string
 	}{
-		Name:  user.Name,
-		Token: rawToken,
-		url:   url,
+		Name: user.Name,
+		Url:  url,
 	}
 
 	htmlBody, err := email.LoadTemplates("internal/templates/email/password_reset.html", userData)
